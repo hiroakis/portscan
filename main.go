@@ -12,8 +12,7 @@ import (
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPortLowerLimit := flag.Int("lower", 1, "scan range(lower limit)")
-	optPortUpperLimit := flag.Int("upper", 65536, "scan range(upper limit)")
-	optProtocol := flag.String("protocol", "tcp", "tcp or udp")
+	optPortUpperLimit := flag.Int("upper", 65535, "scan range(upper limit)")
 	optPrint := flag.String("print", "open", "open, close or both")
 	flag.Parse()
 
@@ -32,7 +31,8 @@ func main() {
 	for i := *optPortLowerLimit; i <= *optPortUpperLimit; i++ {
 		go func(port int) {
 			target := fmt.Sprintf("%s:%d", *optHost, port)
-			_, err := net.Dial(*optProtocol, target)
+			con, err := net.Dial("tcp", target)
+			defer con.Close()
 
 			if err != nil && strings.Index(err.Error(), "connection refused") != -1 {
 				closedPort <- port
@@ -48,12 +48,12 @@ func main() {
 		select {
 		case o := <-openedPort:
 			if *optPrint == "open" || *optPrint == "both" {
-				msg := fmt.Sprintf("%s://%s:%d open", *optProtocol, *optHost, o)
+				msg := fmt.Sprintf("tcp://%s:%d open", *optHost, o)
 				fmt.Println(msg)
 			}
 		case c := <-closedPort:
 			if *optPrint == "close" || *optPrint == "both" {
-				msg := fmt.Sprintf("%s://%s:%d closed", *optProtocol, *optHost, c)
+				msg := fmt.Sprintf("tcp://%s:%d closed", *optHost, c)
 				fmt.Println(msg)
 			}
 		case e := <-errorMessage:
