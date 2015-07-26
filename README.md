@@ -10,13 +10,13 @@ go get github.com/hiroakis/portscan
 
 # Usage
 
-## scan all tcp ports on local machine
+* scan tcp ports from 1-1024 on local machine
 
 ```
 portscan
 ```
 
-## scan tcp ports from 80-11211 on remote machine
+* scan tcp ports from 80-11211 on remote machine
 
 ```
 portscan -host=REMOTE_MACHINE -lower=80 -upper=11211
