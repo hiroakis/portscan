@@ -12,7 +12,7 @@ import (
 func main() {
 	optHost := flag.String("host", "localhost", "Hostname")
 	optPortLowerLimit := flag.Int("lower", 1, "scan range(lower limit)")
-	optPortUpperLimit := flag.Int("upper", 65535, "scan range(upper limit)")
+	optPortUpperLimit := flag.Int("upper", 1024, "scan range(upper limit)")
 	optPrint := flag.String("print", "open", "open, close or both")
 	flag.Parse()
 
