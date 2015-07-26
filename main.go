@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -31,10 +32,12 @@ func main() {
 	for i := *optPortLowerLimit; i <= *optPortUpperLimit; i++ {
 		go func(port int) {
 			target := fmt.Sprintf("%s:%d", *optHost, port)
-			con, err := net.Dial("tcp", target)
+			con, err := net.DialTimeout("tcp", target, 3*time.Second)
 
 			if err != nil && strings.Index(err.Error(), "connection refused") != -1 {
 				closedPort <- port
+			} else if err != nil && strings.Index(err.Error(), "i/o timeout") != -1 {
+				errorMessage <- err.Error()
 			} else if err != nil {
 				errorMessage <- err.Error()
 			} else {
