@@ -34,12 +34,11 @@ func main() {
 			con, err := net.Dial("tcp", target)
 
 			if err != nil && strings.Index(err.Error(), "connection refused") != -1 {
-				defer con.Close()
 				closedPort <- port
 			} else if err != nil {
-				defer con.Close()
 				errorMessage <- err.Error()
 			} else {
+				defer con.Close()
 				openedPort <- port
 			}
 		}(i)
