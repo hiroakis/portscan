@@ -32,11 +32,12 @@ func main() {
 		go func(port int) {
 			target := fmt.Sprintf("%s:%d", *optHost, port)
 			con, err := net.Dial("tcp", target)
-			defer con.Close()
 
 			if err != nil && strings.Index(err.Error(), "connection refused") != -1 {
+				defer con.Close()
 				closedPort <- port
 			} else if err != nil {
+				defer con.Close()
 				errorMessage <- err.Error()
 			} else {
 				openedPort <- port
